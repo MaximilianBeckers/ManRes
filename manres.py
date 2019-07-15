@@ -2,11 +2,13 @@ import numpy as np
 import pyfftw
 import matplotlib.pyplot as plt
 from FSCUtil import FSCutil
+from scipy.spatial import ConvexHull
 
 class ManRes:
 
 	halfMap1 = [];
 	halfMap2 = [];
+	apix = 0.0;
 	frequencyMap = [];
 	FSCdata = [];
 	resVec = [];
@@ -21,10 +23,11 @@ class ManRes:
 		self.embeddings = embeddingData;
 		self.sizeMap = size;
 		self.make_half_maps();
+		self.standardizePixelSize();
 		self.calculate_frequency_map();
 
 		maskData = np.ones(self.halfMap1.shape);
-		resVec, FSC, _, _, qVals_FDR, resolution_FDR, _ = FSCutil.FSC(self.halfMap1, self.halfMap2, maskData, 1, 0.143, 1, False, True, None);
+		resVec, FSC, _, _, qVals_FDR, resolution_FDR, _ = FSCutil.FSC(self.halfMap1, self.halfMap2, maskData, self.apix, 0.143, 1, False, True, None);
 
 		self.resolution = resolution_FDR;
 		self.FSCdata = FSC;
@@ -52,7 +55,7 @@ class ManRes:
 		spacingX = (maxX-minX)/float(self.sizeMap);
 		spacingY = (maxY-minY)/float(self.sizeMap);
 		spacing = np.max(spacingX, spacingY);
-
+		self.apix = spacing;
 
 		#split the localizations randomly in 2 half sets
 		permutedSequence = np.random.permutation(np.arange(numLocalizations));
@@ -160,4 +163,23 @@ class ManRes:
 
 		plt.savefig('FSC.png', dpi=300);
 		plt.close();
+
+	#---------------------------------------------
+	def standardizePixelSize(self):
+
+		#calculate convex hull
+		hull = ConvexHull(self.embeddings);
+		numVertices = hull.points.shape[0];
+
+		#now get maximum distance between two vertices
+		maxDist = 0.0;
+		for ind1 in range(numVertices-1):
+			for ind2 in range(ind1+1, numVertices):
+
+				tmpDist = np.sqrt((hull.points[ind1,:] - hull.points[ind2,:])**2);
+
+				if tmpDist > maxDist:
+					maxDist = tmpDist;
+
+		self.apix = self.apix/maxDist;
 
