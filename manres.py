@@ -1,12 +1,17 @@
-imprt numpy as np
+import numpy as np
 import pyfftw
-from FSCUtil imports FSCutil
+import matplotlib.pyplot as plt
+from FSCUtil import FSCutil
 
 class ManRes:
 
 	halfMap1 = [];
 	halfMap2 = [];
 	frequencyMap = [];
+	FSCdata = [];
+	resVec = [];
+	qVals = [];
+	resolution = 0.0;
 	embeddings = [];
 	sizeMap = 0;
 
@@ -18,10 +23,17 @@ class ManRes:
 		self.make_half_maps();
 		self.calculate_frequency_map();
 
+		maskData = np.ones(self.halfMap1.shape);
+		resVec, FSC, _, _, qVals_FDR, resolution_FDR, _ = FSCutil.FSC(self.halfMap1, self.halfMap2, maskData, 1, 0.143, 1, False, True, None);
+
+		self.resolution = resolution_FDR;
+		self.FSCdata = FSC;
+		self.qVals = qVals_FDR;
+
+		self.writeFSC();
 
 	#---------------------------------------------
 	def make_half_maps(self):
-
 
 		#initialize the half maps
 		tmpHalfMap1 = np.zeros(self.sizeMap, self.sizeMap);
@@ -29,7 +41,7 @@ class ManRes:
 
 		numLocalizations = self.embeddings.shape[0];
 		sizeHalfSet = int(numLocalizations/2);
-	
+
 
 		#make the grid
 		minX = np.amin(self.embeddings, 0);
@@ -52,20 +64,20 @@ class ManRes:
 		for i in range(half1.shape[0]):
 
 			#transform localization to the grid
-			indicesInGrid = int((localizations[i, :] - np.array([minX, minY]))/spacing);
-			tmpHalfMap1[indicesInGrid] = 1.0;
+			indicesInGrid = int((self.embeddings[i, :] - np.array([minX, minY]))/spacing);
+			tmpHalfMap1[indicesInGrid[0], indicesInGrid[1]] = tmpHalfMap1[indicesInGrid[0], indicesInGrid[1]] + 1.0;
 
 
 		#place localizations of HalfSet2
 		for i in range(half2.shape[0]):
 
 			#transform localization to the grid
-			indicesInGrid = int((localizations[i, :] - np.array([minX, minY]))/spacing);
-			tmpHalfMap2[indicesInGrid] = 1.0;
+			indicesInGrid = int((self.embeddings[i, :] - np.array([minX, minY]))/spacing);
+			tmpHalfMap2[indicesInGrid[0], indicesInGrid[1]] = tmpHalfMap2[indicesInGrid[0], indicesInGrid[1]] + 1.0;
+
 
 		self.halfMap1 = tmpHalfMap1;
 		self.halfMap2 = tmpHalfMap2;
-
 
 	#---------------------------------------------
 	def calculate_frequency_map(self):
@@ -122,6 +134,30 @@ class ManRes:
 
 		self.frequencyMap = tmpFrequencyMap;
 
+	# --------------------------------------------
+	def writeFSC(self):
 
+		# *******************************
+		# ******* write FSC plots *******
+		# *******************************
 
+		plt.plot(self.resVec, self.FSCdata, label="FSC", linewidth=1.5);
+
+		# threshold the adjusted pValues
+		self.qVals[self.qVals <= 0.01] = 0.0;
+
+		plt.plot(self.resVec[0:][self.qVals == 0.0], self.qVals[self.qVals == 0.0] - 0.05, 'xr',
+				 label="sign. at 1% FDR");
+		# plt.plot(resolutions[0:][pValues==0.0], pValues[pValues==0.0]-0.1, 'xb', label="sign. at 1%");
+
+		plt.axhline(0.5, linewidth=0.5, color='r');
+		plt.axhline(0.143, linewidth=0.5, color='r');
+		plt.axhline(0.0, linewidth=0.5, color='b');
+
+		plt.xlabel("1/resolution [1/A]");
+		plt.ylabel("FSC");
+		plt.legend();
+
+		plt.savefig('FSC.png', dpi=300);
+		plt.close();
 
