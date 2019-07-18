@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="865121ca-3a96-402e-ae58-44ecc31845f3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/manres.py" beforeDir="false" afterPath="$PROJECT_DIR$/manres.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,10 +14,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/manres.py">
+        <entry file="file://$PROJECT_DIR$/ManRes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2638">
-              <caret line="184" lean-forward="true" selection-start-line="184" selection-end-line="184" />
+            <state relative-caret-position="581">
+              <caret line="74" column="33" lean-forward="true" selection-start-line="74" selection-start-column="33" selection-end-line="74" selection-end-column="33" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -42,12 +43,13 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/manres.py" />
+        <option value="$PROJECT_DIR$/ManRes.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1628" />
-    <option name="y" value="35" />
+    <option name="x" value="1655" />
+    <option name="y" value="33" />
     <option name="width" value="1365" />
     <option name="height" value="821" />
   </component>
@@ -104,10 +106,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1628" y="35" width="1365" height="821" extended-state="0" />
+    <frame x="1655" y="33" width="1365" height="821" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2532124" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26832956" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -129,13 +131,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/FSCUtil/FSCutil.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="12" selection-start-line="1" selection-start-column="12" selection-end-line="1" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/confidenceMapUtil/locscaleUtil.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -155,10 +150,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/manres.py">
+    <entry file="file://$PROJECT_DIR$/FSCUtil/FSCutil.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2638">
-          <caret line="184" lean-forward="true" selection-start-line="184" selection-end-line="184" />
+        <state relative-caret-position="15">
+          <caret line="1" column="12" selection-start-line="1" selection-start-column="12" selection-end-line="1" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ManRes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="581">
+          <caret line="74" column="33" lean-forward="true" selection-start-line="74" selection-start-column="33" selection-end-line="74" selection-end-column="33" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

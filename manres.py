@@ -17,6 +17,7 @@ class ManRes:
 	embeddings = [];
 	sizeMap = 0;
 
+
 	#---------------------------------------------
 	def ManRes(self, embeddingData, size):
 
@@ -35,26 +36,28 @@ class ManRes:
 
 		self.writeFSC();
 
+
 	#---------------------------------------------
 	def make_half_maps(self):
 
 		#initialize the half maps
-		tmpHalfMap1 = np.zeros(self.sizeMap, self.sizeMap);
-		tmpHalfMap2 = np.zeros(self.sizeMap, self.sizeMap);
+		tmpHalfMap1 = np.zeros((self.sizeMap, self.sizeMap));
+		tmpHalfMap2 = np.zeros((self.sizeMap, self.sizeMap));
 
 		numLocalizations = self.embeddings.shape[0];
 		sizeHalfSet = int(numLocalizations/2);
 
 
 		#make the grid
-		minX = np.amin(self.embeddings, 0);
-		maxX = np.amax(self.embeddings, 0);
-		minY = np.amin(self.embeddings, 1);
-		maxY = np.amax(self.embeddings, 1);
+		minX = np.amin(self.embeddings[:,0]);
+		maxX = np.amax(self.embeddings[:,0]);
+		minY = np.amin(self.embeddings[:,1]);
+		maxY = np.amax(self.embeddings[:,1]);
 
 		spacingX = (maxX-minX)/float(self.sizeMap);
 		spacingY = (maxY-minY)/float(self.sizeMap);
-		spacing = np.max(spacingX, spacingY);
+
+		spacing = max(spacingX, spacingY);
 		self.apix = spacing;
 
 		#split the localizations randomly in 2 half sets
@@ -67,7 +70,9 @@ class ManRes:
 		for i in range(half1.shape[0]):
 
 			#transform localization to the grid
-			indicesInGrid = int((self.embeddings[i, :] - np.array([minX, minY]))/spacing);
+			indicesInGrid = np.rint(((self.embeddings[i, :] - np.array([minX, minY]))/spacing));
+			indicesInGrid = indicesInGrid.astype(int);
+			print(indicesInGrid);
 			tmpHalfMap1[indicesInGrid[0], indicesInGrid[1]] = tmpHalfMap1[indicesInGrid[0], indicesInGrid[1]] + 1.0;
 
 
@@ -81,6 +86,7 @@ class ManRes:
 
 		self.halfMap1 = tmpHalfMap1;
 		self.halfMap2 = tmpHalfMap2;
+
 
 	#---------------------------------------------
 	def calculate_frequency_map(self):
@@ -137,6 +143,7 @@ class ManRes:
 
 		self.frequencyMap = tmpFrequencyMap;
 
+
 	# --------------------------------------------
 	def writeFSC(self):
 
@@ -164,6 +171,7 @@ class ManRes:
 		plt.savefig('FSC.png', dpi=300);
 		plt.close();
 
+
 	#---------------------------------------------
 	def standardizePixelSize(self):
 
@@ -176,7 +184,7 @@ class ManRes:
 		for ind1 in range(numVertices-1):
 			for ind2 in range(ind1+1, numVertices):
 
-				tmpDist = np.sqrt((hull.points[ind1,:] - hull.points[ind2,:])**2);
+				tmpDist = np.sqrt(np.sum((hull.points[ind1,:] - hull.points[ind2,:])**2));
 
 				if tmpDist > maxDist:
 					maxDist = tmpDist;
