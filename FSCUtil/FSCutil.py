@@ -44,7 +44,7 @@ def calculate_frequency_map(map):
 	elif map.ndim == 2:
 		# calc frequency for each voxel
 		freqi = np.fft.fftfreq(sizeMap[0], 1.0);
-		freqj = np.fft.fftfreq(sizeMap[1], 1.0);
+		freqj = np.fft.rfftfreq(sizeMap[1], 1.0);
 
 		sizeFFT = np.array([freqi.size, freqj.size]);
 		FFT = np.zeros(sizeFFT);
@@ -282,8 +282,8 @@ def FSC(halfMap1, halfMap2, maskData, apix, cutoff, numAsymUnits, localRes, verb
 		resolution_FDR = 2.0*apix;
 
 	if verbose:
-		print('Resolution at a unmasked ' + repr(cutoff) + ' FSC threshold: ' + repr(round(resolution, 2)));
-		print('Resolution at 1 % FDR-FSC: ' + repr(round(resolution_FDR, 2)) + ' Angstrom');
+		print('Resolution at a unmasked ' + repr(cutoff) + ' FSC threshold: ' + repr(round(resolution, 5)));
+		print('Resolution at 1 % FDR-FSC: ' + repr(round(resolution_FDR, 5)) + ' Angstrom');
 		#print('Resolution at 0.01 % FDR: ' + repr(round(resolution_FDR01, 2)) + ' Angstrom');
 		#print('Resolution at 1 % FWER: ' + repr(round(resolution_FWER, 2)) + ' Angstrom');
 
@@ -422,6 +422,7 @@ def doPermutations(tmpSample2, tmpSample1ComplexConj, numPermutations, tmpFSCden
 
 #-------------------------------------------------------
 def generatePermutations(numPermutations, tmpSample1ComplexConj, tmpSample2):
+
 
 	permutedCorCoeffs = np.zeros(numPermutations);
 	for i in range(numPermutations):

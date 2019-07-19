@@ -1,10 +1,11 @@
 import numpy as np
-import pyfftw
 import matplotlib.pyplot as plt
 from FSCUtil import FSCutil
-from scipy.spatial import ConvexHull
+import smallestenclosingcircle
+
 
 class ManRes:
+
 
 	halfMap1 = [];
 	halfMap2 = [];
@@ -21,20 +22,24 @@ class ManRes:
 	#---------------------------------------------
 	def ManRes(self, embeddingData, size):
 
+		np.random.seed(3);
 		self.embeddings = embeddingData;
 		self.sizeMap = size;
 		self.make_half_maps();
-		self.standardizePixelSize();
+		self.standardizeResolution();
 		self.calculate_frequency_map();
-
 		maskData = np.ones(self.halfMap1.shape);
-		resVec, FSC, _, _, qVals_FDR, resolution_FDR, _ = FSCutil.FSC(self.halfMap1, self.halfMap2, maskData, self.apix, 0.143, 1, False, True, None);
+
+		tmpResVec, FSC, _, _, qVals_FDR, resolution_FDR, _ = FSCutil.FSC(self.halfMap1, self.halfMap2, maskData, self.apix, 0.143, 1, False, False, None);
 
 		self.resolution = resolution_FDR;
 		self.FSCdata = FSC;
 		self.qVals = qVals_FDR;
+		self.resVec = tmpResVec;
 
 		self.writeFSC();
+
+		print(self.resolution);
 
 
 	#---------------------------------------------
@@ -43,6 +48,7 @@ class ManRes:
 		#initialize the half maps
 		tmpHalfMap1 = np.zeros((self.sizeMap, self.sizeMap));
 		tmpHalfMap2 = np.zeros((self.sizeMap, self.sizeMap));
+
 
 		numLocalizations = self.embeddings.shape[0];
 		sizeHalfSet = int(numLocalizations/2);
@@ -54,8 +60,9 @@ class ManRes:
 		minY = np.amin(self.embeddings[:,1]);
 		maxY = np.amax(self.embeddings[:,1]);
 
-		spacingX = (maxX-minX)/float(self.sizeMap);
-		spacingY = (maxY-minY)/float(self.sizeMap);
+
+		spacingX = (maxX-minX)/float(self.sizeMap -1);
+		spacingY = (maxY-minY)/float(self.sizeMap -1);
 
 		spacing = max(spacingX, spacingY);
 		self.apix = spacing;
@@ -65,24 +72,23 @@ class ManRes:
 		half1 = self.embeddings[permutedSequence[0:sizeHalfSet], :];
 		half2 = self.embeddings[permutedSequence[sizeHalfSet:], :];
 
-
+		print("make halfmap 1 ...");
 		#place localizations of HalfSet1
 		for i in range(half1.shape[0]):
 
 			#transform localization to the grid
-			indicesInGrid = np.rint(((self.embeddings[i, :] - np.array([minX, minY]))/spacing));
+			indicesInGrid = np.floor((half1[i, :] - np.array([minX, minY]))/spacing);
 			indicesInGrid = indicesInGrid.astype(int);
-			print(indicesInGrid);
 			tmpHalfMap1[indicesInGrid[0], indicesInGrid[1]] = tmpHalfMap1[indicesInGrid[0], indicesInGrid[1]] + 1.0;
 
-
+		print("make halfmap 2 ...");
 		#place localizations of HalfSet2
 		for i in range(half2.shape[0]):
 
 			#transform localization to the grid
-			indicesInGrid = int((self.embeddings[i, :] - np.array([minX, minY]))/spacing);
+			indicesInGrid = np.floor((half2[i, :] - np.array([minX, minY]))/spacing);
+			indicesInGrid = indicesInGrid.astype(int);
 			tmpHalfMap2[indicesInGrid[0], indicesInGrid[1]] = tmpHalfMap2[indicesInGrid[0], indicesInGrid[1]] + 1.0;
-
 
 		self.halfMap1 = tmpHalfMap1;
 		self.halfMap2 = tmpHalfMap2;
@@ -97,7 +103,7 @@ class ManRes:
 
 		sizeMap = self.halfMap1.shape;
 
-		if map.ndim == 3:
+		if self.halfMap1.ndim == 3:
 			# calc frequency for each voxel
 			freqi = np.fft.fftfreq(sizeMap[0], 1.0);
 			freqj = np.fft.fftfreq(sizeMap[1], 1.0);
@@ -123,7 +129,7 @@ class ManRes:
 
 			tmpFrequencyMap = np.sqrt(freqMapi + freqMapj + freqMapk);
 
-		elif map.ndim == 2:
+		elif self.halfMap1.ndim == 2:
 			# calc frequency for each voxel
 			freqi = np.fft.fftfreq(sizeMap[0], 1.0);
 			freqj = np.fft.fftfreq(sizeMap[1], 1.0);
@@ -173,12 +179,15 @@ class ManRes:
 
 
 	#---------------------------------------------
-	def standardizePixelSize(self):
+	def standardizeResolution(self):
 
 		#calculate convex hull
-		hull = ConvexHull(self.embeddings);
-		numVertices = hull.points.shape[0];
+		print("Calculate smalles enclosing circle ...");
+		hull = smallestenclosingcircle.make_circle(self.embeddings);
 
+		print(hull[2]);
+
+		"""numVertices = hull.points.shape[0];
 		#now get maximum distance between two vertices
 		maxDist = 0.0;
 		for ind1 in range(numVertices-1):
@@ -187,7 +196,9 @@ class ManRes:
 				tmpDist = np.sqrt(np.sum((hull.points[ind1,:] - hull.points[ind2,:])**2));
 
 				if tmpDist > maxDist:
-					maxDist = tmpDist;
+					maxDist = tmpDist;"""
 
-		self.apix = self.apix/maxDist;
+
+		self.apix = self.apix/hull[2];
+
 
