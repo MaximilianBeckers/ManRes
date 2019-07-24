@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from FSCUtil import FSCutil
-import smallestenclosingcircle
-
+from Utilities import FSCutil,smallestEnclosingCircle
 
 class ManRes:
 
@@ -27,7 +25,7 @@ class ManRes:
 		self.sizeMap = size;
 		self.make_half_maps();
 		self.standardizeResolution();
-		self.calculate_frequency_map();
+		self.frequencyMap = FSCutil.calculate_frequency_map(self.halfMap1);
 		maskData = np.ones(self.halfMap1.shape);
 
 		tmpResVec, FSC, _, _, qVals_FDR, resolution_FDR, _ = FSCutil.FSC(self.halfMap1, self.halfMap2, maskData, self.apix, 0.143, 1, False, False, None);
@@ -94,62 +92,6 @@ class ManRes:
 		self.halfMap2 = tmpHalfMap2;
 
 
-	#---------------------------------------------
-	def calculate_frequency_map(self):
-
-		#*********************************************************
-		#*** calculation of the frequency map of the given map ***
-		#*********************************************************
-
-		sizeMap = self.halfMap1.shape;
-
-		if self.halfMap1.ndim == 3:
-			# calc frequency for each voxel
-			freqi = np.fft.fftfreq(sizeMap[0], 1.0);
-			freqj = np.fft.fftfreq(sizeMap[1], 1.0);
-			freqk = np.fft.rfftfreq(sizeMap[2], 1.0);
-
-			sizeFFT = np.array([freqi.size, freqj.size, freqk.size]);
-			FFT = np.zeros(sizeFFT);
-
-			freqMapi = np.copy(FFT);
-			for j in range(sizeFFT[1]):
-				for k in range(sizeFFT[2]):
-					freqMapi[:, j, k] = freqi * freqi;
-
-			freqMapj = np.copy(FFT);
-			for i in range(sizeFFT[0]):
-				for k in range(sizeFFT[2]):
-					freqMapj[i, :, k] = freqj * freqj;
-
-			freqMapk = np.copy(FFT);
-			for i in range(sizeFFT[0]):
-				for j in range(sizeFFT[1]):
-					freqMapk[i, j, :] = freqk * freqk;
-
-			tmpFrequencyMap = np.sqrt(freqMapi + freqMapj + freqMapk);
-
-		elif self.halfMap1.ndim == 2:
-			# calc frequency for each voxel
-			freqi = np.fft.fftfreq(sizeMap[0], 1.0);
-			freqj = np.fft.fftfreq(sizeMap[1], 1.0);
-
-			sizeFFT = np.array([freqi.size, freqj.size]);
-			FFT = np.zeros(sizeFFT);
-
-			freqMapi = np.copy(FFT);
-			for j in range(sizeFFT[1]):
-				freqMapi[:, j] = freqi * freqi;
-
-			freqMapj = np.copy(FFT);
-			for i in range(sizeFFT[0]):
-				freqMapj[i, :] = freqj * freqj;
-
-			tmpFrequencyMap = np.sqrt(freqMapi + freqMapj);
-
-		self.frequencyMap = tmpFrequencyMap;
-
-
 	# --------------------------------------------
 	def writeFSC(self):
 
@@ -164,7 +106,6 @@ class ManRes:
 
 		plt.plot(self.resVec[0:][self.qVals == 0.0], self.qVals[self.qVals == 0.0] - 0.05, 'xr',
 				 label="sign. at 1% FDR");
-		# plt.plot(resolutions[0:][pValues==0.0], pValues[pValues==0.0]-0.1, 'xb', label="sign. at 1%");
 
 		plt.axhline(0.5, linewidth=0.5, color='r');
 		plt.axhline(0.143, linewidth=0.5, color='r');
@@ -183,21 +124,7 @@ class ManRes:
 
 		#calculate convex hull
 		print("Calculate smalles enclosing circle ...");
-		hull = smallestenclosingcircle.make_circle(self.embeddings);
-
-		print(hull[2]);
-
-		"""numVertices = hull.points.shape[0];
-		#now get maximum distance between two vertices
-		maxDist = 0.0;
-		for ind1 in range(numVertices-1):
-			for ind2 in range(ind1+1, numVertices):
-
-				tmpDist = np.sqrt(np.sum((hull.points[ind1,:] - hull.points[ind2,:])**2));
-
-				if tmpDist > maxDist:
-					maxDist = tmpDist;"""
-
+		hull = smallestEnclosingCircle.make_circle(self.embeddings);
 
 		self.apix = self.apix/hull[2];
 

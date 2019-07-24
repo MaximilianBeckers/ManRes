@@ -1,5 +1,5 @@
 import numpy as np
-from confidenceMapUtil import FDRutil 
+from Utilities import FDRutil
 import matplotlib.pyplot as plt
 import math
 import sys
@@ -169,7 +169,7 @@ def FSC(halfMap1, halfMap2, maskData, apix, cutoff, numAsymUnits, localRes, verb
 	if localRes:
 		maskCoeff = 0.23;
 	else:
-		maskCoeff = 0.7;
+		maskCoeff = 1.0;
 
 	if maskData is not None:
 		halfMap1 = halfMap1*maskData;
