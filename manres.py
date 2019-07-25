@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 import matplotlib.pyplot as plt
 from Utilities import FSCutil,smallestEnclosingCircle, FDRutil
 
@@ -18,12 +19,16 @@ class ManRes:
 	sizeMap = 0;
 
 	#---------------------------------------------
-	def ManRes(self, embeddingHalf1, embeddingHalf2, size):
+	def ManRes_halfSets(self, embeddingHalf1, embeddingHalf2, size):
 
 		np.random.seed(3);
 		
 		self.embeddingsHalf1 = embeddingHalf1;
 		self.embeddingsHalf2 = embeddingHalf2;
+
+		#optimize procrustes distance
+		self.embeddingsHalf1, self.embeddingsHalf2, _ = scipy.spatial.procrustes(self.embeddingsHalf1, self.embeddingsHalf2);
+
 		self.sizeMap = size;
 		self.make_half_maps();
 		self.fullMap = self.halfMap1 + self.halfMap2;
@@ -41,6 +46,8 @@ class ManRes:
 		self.writeFSC();
 
 		print(self.resolution);
+
+
 	#---------------------------------------------
 	def ManRes(self, embeddingData, size):
 
@@ -52,7 +59,6 @@ class ManRes:
 		permutedSequence = np.random.permutation(np.arange(numLocalizations));
 		self.embeddingsHalf1 = embeddingData[permutedSequence[0:sizeHalfSet], :];
 		self.embeddingsHalf2 = embeddingData[permutedSequence[sizeHalfSet:], :];
-
 
 		self.sizeMap = size;
 		self.make_half_maps();
