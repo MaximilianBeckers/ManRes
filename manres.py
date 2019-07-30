@@ -1,5 +1,6 @@
 import numpy as np
 import scipy
+import sys
 import matplotlib.pyplot as plt
 from Utilities import FSCutil,smallestEnclosingCircle, FDRutil
 
@@ -17,6 +18,8 @@ class ManRes:
 	resolution = 0.0;
 	embeddings = [];
 	sizeMap = 0;
+	encCircRad = 0.0;
+
 
 	#---------------------------------------------
 	def ManRes_halfSets(self, embeddingHalf1, embeddingHalf2, size):
@@ -27,7 +30,7 @@ class ManRes:
 		self.embeddingsHalf2 = embeddingHalf2;
 
 		#optimize procrustes distance
-		self.embeddingsHalf1, self.embeddingsHalf2, _ = scipy.spatial.procrustes(self.embeddingsHalf1, self.embeddingsHalf2);
+		#self.embeddingsHalf1, self.embeddingsHalf2, _ = scipy.spatial.procrustes(self.embeddingsHalf1, self.embeddingsHalf2);
 
 		self.sizeMap = size;
 		self.make_half_maps();
@@ -40,12 +43,11 @@ class ManRes:
 
 		self.resolution = resolution_FDR;
 		self.FSCdata = FSC;
+		self.calcTTest();
 		self.qVals = qVals_FDR;
 		self.resVec = tmpResVec;
 		self.filterMap();
 		self.writeFSC();
-
-		print(self.resolution);
 
 
 	#---------------------------------------------
@@ -71,13 +73,13 @@ class ManRes:
 
 		self.resolution = resolution_FDR;
 		self.FSCdata = FSC;
+		self.calcTTest();
 		self.qVals = qVals_FDR;
 		self.resVec = tmpResVec;
 		self.filterMap();
 		self.writeFSC();
 
-		print(self.resolution);
-                
+
 	#---------------------------------------------
 	def make_half_maps(self):
 
@@ -156,10 +158,11 @@ class ManRes:
 
 		#calculate convex hull
 		print("Calculate smallest enclosing circle ...");
-		hull = smallestEnclosingCircle.make_circle(np.concatenate((self.embeddingsHalf1, self.embeddingsHalf2)));
+		smallestEncCirc = smallestEnclosingCircle.make_circle(np.concatenate((self.embeddingsHalf1, self.embeddingsHalf2)));
 
+		self.encCircRad = smallestEncCirc[2];
 		#scale pixel size with respect to the radius of the smallest enclosing circle
-		self.apix = self.apix/hull[2];
+		self.apix = self.apix/self.encCircRad;
 
 
     #---------------------------------------------
@@ -168,9 +171,22 @@ class ManRes:
 		#fourier transform the full map
 		self.filteredMap = FDRutil.lowPassFilter(np.fft.rfftn(self.fullMap), self.frequencyMap, self.apix/float(self.resolution), self.fullMap.shape);
 		self.filteredMap[self.filteredMap<0.0] = 0.0;
-                
 
 
-	
+	#---------------------------------------------
+	def calcTTest(self):
 
+		numShells = self.FSCdata.shape[0];
+		sampleForTTest = self.FSCdata[int(0.8*numShells):];
+
+		if sampleForTTest.shape[0] > 100:
+			sampleForTTest = np.random.choice(sampleForTTest, 100);
+
+		testResult = scipy.stats.ttest_1samp(sampleForTTest, 0.0);
+		pVal = testResult[1];
+
+		if pVal<0.00001:
+			print("FSC is significantly deviating from 0 at high-resolutions. Points are clustered to close or sampling rate too low!")
+		else:
+			print("Estimated resolution at 1% FDR-FSC: {:.3f}".format(self.resolution));
 
