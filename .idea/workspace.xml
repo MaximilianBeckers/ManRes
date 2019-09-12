@@ -12,12 +12,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/manres.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="164" column="45" selection-start-line="164" selection-start-column="45" selection-end-line="164" selection-end-column="45" />
+            <state relative-caret-position="452">
+              <caret line="79" column="23" selection-start-line="79" selection-start-column="23" selection-end-line="79" selection-end-column="23" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -41,9 +41,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1612" />
-    <option name="y" value="80" />
-    <option name="width" value="1503" />
+    <option name="x" value="-1499" />
+    <option name="y" value="23" />
+    <option name="width" value="1440" />
     <option name="height" value="819" />
   </component>
   <component name="ProjectView">
@@ -58,6 +58,11 @@
             <path>
               <item name="ManRes" type="b2602c69:ProjectViewProjectNode" />
               <item name="ManRes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ManRes" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ManRes" type="462c0819:PsiDirectoryNode" />
+              <item name="Utilities" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -122,10 +127,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1594" y="69" width="1503" height="819" extended-state="0" />
+    <frame x="-1499" y="23" width="1440" height="819" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28473648" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.32331902" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -151,10 +156,28 @@
     <entry file="file://$PROJECT_DIR$/FSCUtil/localResolutions.py" />
     <entry file="file://$PROJECT_DIR$/smallestenclosingcircle.py" />
     <entry file="file://$PROJECT_DIR$/FSCUtil/FSCutil.py" />
+    <entry file="file://$PROJECT_DIR$/Utilities/FDRutil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Utilities/FSCutil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-785">
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/manres.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="164" column="45" selection-start-line="164" selection-start-column="45" selection-end-line="164" selection-end-column="45" />
+        <state relative-caret-position="452">
+          <caret line="79" column="23" selection-start-line="79" selection-start-column="23" selection-end-line="79" selection-end-column="23" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

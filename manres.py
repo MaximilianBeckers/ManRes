@@ -46,7 +46,7 @@ class ManRes:
 		self.calcTTest();
 		self.qVals = qVals_FDR;
 		self.resVec = tmpResVec;
-		self.filterMap();
+		#self.filterMap();
 		self.writeFSC();
 
 
@@ -76,7 +76,7 @@ class ManRes:
 		self.calcTTest();
 		self.qVals = qVals_FDR;
 		self.resVec = tmpResVec;
-		self.filterMap();
+		#self.filterMap();
 		self.writeFSC();
 
 
@@ -145,7 +145,7 @@ class ManRes:
 		plt.axhline(0.143, linewidth=0.5, color='r');
 		plt.axhline(0.0, linewidth=0.5, color='b');
 
-		plt.xlabel("1/resolution [1/A]");
+		plt.xlabel("1/ ManRes score");
 		plt.ylabel("FSC");
 		plt.legend();
 
@@ -186,7 +186,8 @@ class ManRes:
 		pVal = testResult[1];
 
 		if pVal<0.00001:
-			print("FSC is significantly deviating from 0 at high-resolutions. Points are clustered to close or sampling rate too low!")
+			print("FSC is significantly deviating from 0 at high-resolutions. Points are clustered too close or sampling rate too low!")
+			self.resolution = 0.00;
 		else:
 			print("Estimated resolution at 1% FDR-FSC: {:.3f}".format(self.resolution));
 
