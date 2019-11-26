@@ -169,7 +169,7 @@ def FSC(halfMap1, halfMap2, maskData, apix, cutoff, numAsymUnits, localRes, verb
 	if localRes:
 		maskCoeff = 0.23;
 	else:
-		maskCoeff = 1.0;
+		maskCoeff = 0.6;
 
 	if maskData is not None:
 		halfMap1 = halfMap1*maskData;
